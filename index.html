@@ -22,12 +22,20 @@
       const token = await user.user.getIdToken();
       
       // API কল উদাহরণ
-      const response = await fetch('https://your-worker.workers.dev/api/user', {
+      const response = await fetch('https://microtask-api.tondegamer199961.workers.dev/api/user', {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       console.log(await response.json());
     }
     login();
+  console.log("এটি একটি টেস্ট মেসেজ");
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      console.log("লগইন ইউজার:", user.email, "UID:", user.uid);
+    } else {
+      console.error("কোনো ইউজার লগইন করেনি!");
+    }
+  });
   </script>
 </body>
 </html>
