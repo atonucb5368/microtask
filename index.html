@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>মাইক্রো টাস্ক</title>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCpVvO1Lx8cNgoQ4pX4SEmEf_e5mjaw3qc",
+  		authDomain: "microtaskearn-fa8ae.firebaseapp.com",
+		  projectId: "microtaskearn-fa8ae"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // লগইন ফাংশন
+    async function login() {
+      const email = "user@example.com";
+      const password = "password123";
+      const user = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const token = await user.user.getIdToken();
+      
+      // API কল উদাহরণ
+      const response = await fetch('https://your-worker.workers.dev/api/user', {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      console.log(await response.json());
+    }
+    login();
+  </script>
+</body>
+</html>
