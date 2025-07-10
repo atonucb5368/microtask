@@ -1,0 +1,2270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskEarn Admin Panel</title>
+    <meta name="description" content="TaskEarn Administration Dashboard">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <!-- Admin Login -->
+    <div id="adminLogin" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-gray-50 p-4">
+        <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md animate__animated animate__fadeIn">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-shield-alt text-primary-600 text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800">Admin Panel</h2>
+                <p class="text-gray-600 mt-2">TaskEarn Administration Dashboard</p>
+            </div>
+            <form id="adminLoginForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Admin Email</label>
+                    <input type="email" id="adminEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="admin@taskearn.com" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                    <input type="password" id="adminPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="hidden min-h-screen">
+        <!-- Sidebar -->
+        <div class="fixed inset-y-0 left-0 w-64 bg-white shadow-md z-40 transition-all duration-300">
+            <div class="flex items-center justify-center h-16 px-6 border-b border-gray-100">
+                <div class="flex items-center">
+                    <i class="fas fa-shield-alt text-primary-600 text-xl mr-2"></i>
+                    <h1 class="text-xl font-bold text-gray-800">Task<span class="text-primary-600">Earn</span></h1>
+                </div>
+            </div>
+            <div class="px-4 py-6">
+                <nav class="space-y-1">
+                    <button onclick="openTab('dashboard')" class="tab-button w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-primary-50 text-primary-700">
+                        <i class="fas fa-tachometer-alt mr-3 text-primary-600"></i>
+                        Dashboard
+                    </button>
+                    <button onclick="openTab('tasks')" class="tab-button w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
+                        <i class="fas fa-tasks mr-3 text-gray-500"></i>
+                        Tasks Management
+                    </button>
+                    <button onclick="openTab('users')" class="tab-button w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
+                        <i class="fas fa-users mr-3 text-gray-500"></i>
+                        Users Management
+                    </button>
+                    <button onclick="openTab('withdrawals')" class="tab-button w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
+                        <i class="fas fa-money-bill-wave mr-3 text-gray-500"></i>
+                        Withdrawals
+                    </button>
+                    <button onclick="openTab('approvals')" class="tab-button w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
+                        <i class="fas fa-check-circle mr-3 text-gray-500"></i>
+                        Task Approvals
+                    </button>
+                    <button onclick="openTab('settings')" class="tab-button w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg text-gray-600 hover:bg-gray-50">
+                        <i class="fas fa-cog mr-3 text-gray-500"></i>
+                        Settings
+                    </button>
+                </nav>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="ml-64 transition-all duration-300">
+            <!-- Top Navigation -->
+            <header class="bg-white shadow-sm sticky top-0 z-30">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <div class="flex items-center">
+                        <button id="sidebarToggle" class="text-gray-500 hover:text-gray-700 md:hidden">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <h2 id="pageTitle" class="text-lg font-medium text-gray-800 ml-4">Dashboard</h2>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button onclick="refreshData()" class="p-2 text-gray-500 hover:text-primary-600">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                        <div class="relative">
+                            <button id="userMenuButton" class="flex items-center space-x-2 focus:outline-none">
+                                <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                                    A
+                                </div>
+                                <span class="hidden md:inline text-sm font-medium">Admin</span>
+                            </button>
+                            <div id="userMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+                                <button onclick="adminLogout()" class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="p-6">
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content animate__animated animate__fadeIn">
+                    <div class="mb-6 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Dashboard Overview</h1>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-500">Last updated: <span id="lastUpdated">Just now</span></span>
+                            <button onclick="refreshData()" class="text-primary-600 hover:text-primary-800">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-primary-100 text-primary-600 mr-4">
+                                    <i class="fas fa-users text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-700">Total Users</h3>
+                                    <p id="totalUsers" class="text-2xl font-bold text-primary-600">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-success-100 text-success-600 mr-4">
+                                    <i class="fas fa-tasks text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-700">Total Tasks</h3>
+                                    <p id="totalTasks" class="text-2xl font-bold text-success-600">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-warning-100 text-warning-600 mr-4">
+                                    <i class="fas fa-clock text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-700">Pending Approvals</h3>
+                                    <p id="pendingApprovals" class="text-2xl font-bold text-warning-600">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                            <div class="flex items-center">
+                                <div class="p-3 rounded-full bg-purple-100 text-purple-600 mr-4">
+                                    <i class="fas fa-dollar-sign text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-700">Total Payouts</h3>
+                                    <p id="totalPayouts" class="text-2xl font-bold text-purple-600">$0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                            <h2 class="text-lg font-bold text-gray-800">Recent Activity</h2>
+                            <button onclick="loadRecentActivity()" class="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                                View All
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentActivity" class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                            <i class="fas fa-spinner fa-spin text-lg mr-2"></i>
+                                            Loading activity...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Recent Users -->
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="text-lg font-bold text-gray-800">Recent Users</h2>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earnings</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentUsers" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                                <i class="fas fa-spinner fa-spin text-lg mr-2"></i>
+                                                Loading users...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!-- Recent Withdrawals -->
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="text-lg font-bold text-gray-800">Recent Withdrawals</h2>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentWithdrawals" class="bg-white divide-y divide-gray-200">
+                                        <tr>
+                                            <td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                                <i class="fas fa-spinner fa-spin text-lg mr-2"></i>
+                                                Loading withdrawals...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tasks Management Tab -->
+                <div id="tasks" class="tab-content hidden animate__animated animate__fadeIn">
+                    <div class="mb-6 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Tasks Management</h1>
+                        <button onclick="showCreateTaskModal()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                            <i class="fas fa-plus mr-2"></i> Create Task
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <div class="relative max-w-xs">
+                                        <label for="taskSearch" class="sr-only">Search</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i class="fas fa-search text-gray-400"></i>
+                                            </div>
+                                            <input type="text" id="taskSearch" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full" placeholder="Search tasks...">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <label for="taskStatusFilter" class="text-sm font-medium text-gray-700">Status:</label>
+                                    <select id="taskStatusFilter" class="border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                        <option value="all">All</option>
+                                        <option value="active">Active</option>
+                                        <option value="inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reward</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tasksTable" class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                            <i class="fas fa-spinner fa-spin text-lg mr-2"></i>
+                                            Loading tasks...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                Showing <span id="tasksStart">1</span> to <span id="tasksEnd">10</span> of <span id="tasksTotal">0</span> tasks
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="tasksPrev" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Previous
+                                </button>
+                                <button id="tasksNext" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Management Tab -->
+                <div id="users" class="tab-content hidden animate__animated animate__fadeIn">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Users Management</h1>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <div class="relative max-w-xs">
+                                        <label for="userSearch" class="sr-only">Search</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i class="fas fa-search text-gray-400"></i>
+                                            </div>
+                                            <input type="text" id="userSearch" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full" placeholder="Search users...">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button onclick="showAddUserModal()" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                                    <i class="fas fa-plus mr-2"></i> Add User
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Earnings</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Completed</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable" class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                            <i class="fas fa-spinner fa-spin text-lg mr-2"></i>
+                                            Loading users...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                Showing <span id="usersStart">1</span> to <span id="usersEnd">10</span> of <span id="usersTotal">0</span> users
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="usersPrev" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Previous
+                                </button>
+                                <button id="usersNext" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawals Tab -->
+                <div id="withdrawals" class="tab-content hidden animate__animated animate__fadeIn">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Withdrawal Requests</h1>
+                        <div class="flex space-x-4 mt-4 border-b border-gray-200">
+                            <button onclick="openWithdrawalTab('pending')" class="withdrawal-tab px-4 py-2 text-sm font-medium border-b-2 border-primary-500 text-primary-600">
+                                Pending
+                            </button>
+                            <button onclick="openWithdrawalTab('completed')" class="withdrawal-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                Completed
+                            </button>
+                            <button onclick="openWithdrawalTab('failed')" class="withdrawal-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                                Failed
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                <div class="mb-4 md:mb-0">
+                                    <div class="relative max-w-xs">
+                                        <label for="withdrawalSearch" class="sr-only">Search</label>
+                                        <div class="relative">
+                                            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                                <i class="fas fa-search text-gray-400"></i>
+                                            </div>
+                                            <input type="text" id="withdrawalSearch" class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full" placeholder="Search withdrawals...">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <label for="withdrawalDateFilter" class="text-sm font-medium text-gray-700">Date:</label>
+                                    <select id="withdrawalDateFilter" class="border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm">
+                                        <option value="all">All Time</option>
+                                        <option value="today">Today</option>
+                                        <option value="week">This Week</option>
+                                        <option value="month">This Month</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="withdrawalsTable" class="bg-white divide-y divide-gray-200">
+                                    <tr>
+                                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                                            <i class="fas fa-spinner fa-spin text-lg mr-2"></i>
+                                            Loading withdrawals...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                Showing <span id="withdrawalsStart">1</span> to <span id="withdrawalsEnd">10</span> of <span id="withdrawalsTotal">0</span> withdrawals
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="withdrawalsPrev" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Previous
+                                </button>
+                                <button id="withdrawalsNext" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Approvals Tab -->
+                <div id="approvals" class="tab-content hidden animate__animated animate__fadeIn">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Task Approvals</h1>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
+                        <div class="px-6 py-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="text-sm font-medium text-gray-700">Filter by status:</span>
+                                    <div class="inline-flex space-x-2 ml-4">
+                                        <button onclick="filterApprovals('all')" class="approval-filter px-3 py-1 rounded-lg bg-primary-100 text-primary-700 text-sm font-medium">
+                                            All
+                                        </button>
+                                        <button onclick="filterApprovals('pending')" class="approval-filter px-3 py-1 rounded-lg bg-warning-100 text-warning-700 text-sm font-medium">
+                                            Pending
+                                        </button>
+                                        <button onclick="filterApprovals('approved')" class="approval-filter px-3 py-1 rounded-lg bg-success-100 text-success-700 text-sm font-medium">
+                                            Approved
+                                        </button>
+                                        <button onclick="filterApprovals('rejected')" class="approval-filter px-3 py-1 rounded-lg bg-danger-100 text-danger-700 text-sm font-medium">
+                                            Rejected
+                                        </button>
+                                    </div>
+                                </div>
+                                <button onclick="refreshApprovals()" class="text-primary-600 hover:text-primary-800">
+                                    <i class="fas fa-sync-alt mr-1"></i> Refresh
+                                </button>
+                            </div>
+                        </div>
+                        <div id="approvalsList" class="divide-y divide-gray-200">
+                            <div class="p-8 text-center text-gray-500">
+                                <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                                <p>Loading task approvals...</p>
+                            </div>
+                        </div>
+                        <div class="px-6 py-4 border-t border-gray-100 flex items-center justify-between">
+                            <div class="text-sm text-gray-500">
+                                Showing <span id="approvalsStart">1</span> to <span id="approvalsEnd">10</span> of <span id="approvalsTotal">0</span> approvals
+                            </div>
+                            <div class="flex space-x-2">
+                                <button id="approvalsPrev" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Previous
+                                </button>
+                                <button id="approvalsNext" class="px-3 py-1 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings" class="tab-content hidden animate__animated animate__fadeIn">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">System Settings</h1>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- General Settings -->
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 lg:col-span-2">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="text-lg font-bold text-gray-800">General Settings</h2>
+                            </div>
+                            <div class="p-6">
+                                <form id="generalSettingsForm">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div class="form-group">
+                                            <label for="minWithdrawal" class="block text-sm font-medium text-gray-700 mb-2">Minimum Withdrawal ($)</label>
+                                            <input type="number" id="minWithdrawal" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" value="5.00" min="1" step="0.01">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="currency" class="block text-sm font-medium text-gray-700 mb-2">Currency</label>
+                                            <select id="currency" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                                                <option value="USD">US Dollar ($)</option>
+                                                <option value="EUR">Euro (€)</option>
+                                                <option value="GBP">British Pound (£)</option>
+                                                <option value="BDT">Bangladeshi Taka (৳)</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="taskRewardRange" class="block text-sm font-medium text-gray-700 mb-2">Task Reward Range ($)</label>
+                                            <div class="flex items-center space-x-4">
+                                                <input type="number" id="minTaskReward" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Min" min="0" step="0.01">
+                                                <span class="text-gray-500">to</span>
+                                                <input type="number" id="maxTaskReward" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Max" min="0" step="0.01">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="taskTimeRange" class="block text-sm font-medium text-gray-700 mb-2">Task Time Range (min)</label>
+                                            <div class="flex items-center space-x-4">
+                                                <input type="number" id="minTaskTime" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Min" min="1">
+                                                <span class="text-gray-500">to</span>
+                                                <input type="number" id="maxTaskTime" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Max" min="1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6 flex justify-end">
+                                        <button type="button" onclick="resetGeneralSettings()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium mr-3">
+                                            Reset
+                                        </button>
+                                        <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                                            Save Settings
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Admin Settings -->
+                        <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                            <div class="px-6 py-4 border-b border-gray-100">
+                                <h2 class="text-lg font-bold text-gray-800">Admin Settings</h2>
+                            </div>
+                            <div class="p-6">
+                                <form id="adminSettingsForm">
+                                    <div class="form-group mb-6">
+                                        <label for="adminEmail" class="block text-sm font-medium text-gray-700 mb-2">Admin Email</label>
+                                        <input type="email" id="adminEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" value="admin@taskearn.com" disabled>
+                                    </div>
+                                    <div class="form-group mb-6">
+                                        <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                                        <input type="password" id="newPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="••••••••">
+                                        <p class="text-xs text-gray-500 mt-1">Leave blank to keep current password</p>
+                                    </div>
+                                    <div class="form-group mb-6">
+                                        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                                        <input type="password" id="confirmPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="••••••••">
+                                    </div>
+                                    <div class="mt-6">
+                                        <button type="submit" class="w-full px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                                            Update Admin
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Task Modal -->
+    <div id="createTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 animate__animated animate__fadeInUp">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Create New Task</h3>
+                <button onclick="hideCreateTaskModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="createTaskForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Task Title</label>
+                    <input type="text" id="taskTitle" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Enter task title" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Description</label>
+                    <textarea id="taskDescription" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Enter task description" required></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Reward ($)</label>
+                        <input type="number" id="taskReward" step="0.01" min="0" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="0.00" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Time (minutes)</label>
+                        <input type="number" id="taskTime" min="1" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="10" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideCreateTaskModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                        Create Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Task Modal -->
+    <div id="editTaskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 animate__animated animate__fadeInUp">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Edit Task</h3>
+                <button onclick="hideEditTaskModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editTaskForm">
+                <input type="hidden" id="editTaskId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Task Title</label>
+                    <input type="text" id="editTaskTitle" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Description</label>
+                    <textarea id="editTaskDescription" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required></textarea>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Reward ($)</label>
+                        <input type="number" id="editTaskReward" step="0.01" min="0" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Time (minutes)</label>
+                        <input type="number" id="editTaskTime" min="1" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Status</label>
+                    <select id="editTaskStatus" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideEditTaskModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                        Update Task
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="addUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 animate__animated animate__fadeInUp">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Add New User</h3>
+                <button onclick="hideAddUserModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="addUserForm">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Full Name</label>
+                    <input type="text" id="addUserName" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="John Doe" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="addUserEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="user@example.com" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                    <input type="password" id="addUserPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="••••••••" required>
+                    <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Initial Balance ($)</label>
+                    <input type="number" id="addUserBalance" step="0.01" min="0" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" value="0.00">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideAddUserModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                        Add User
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editUserModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 animate__animated animate__fadeInUp">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Edit User</h3>
+                <button onclick="hideEditUserModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Full Name</label>
+                    <input type="text" id="editUserName" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                    <input type="email" id="editUserEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">New Password</label>
+                    <input type="password" id="editUserPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Leave blank to keep current">
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Total Earnings ($)</label>
+                        <input type="number" id="editUserEarnings" step="0.01" min="0" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Completed Tasks</label>
+                        <input type="number" id="editUserCompletedTasks" min="0" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" required>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideEditUserModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                        Update User
+                    </button>
+                    <button type="button" onclick="confirmDeleteUser()" class="px-4 py-2 bg-danger-600 hover:bg-danger-700 text-white font-medium rounded-lg transition duration-200">
+                        Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Process Withdrawal Modal -->
+    <div id="processWithdrawalModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 animate__animated animate__fadeInUp">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Process Withdrawal</h3>
+                <button onclick="hideProcessWithdrawalModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="processWithdrawalForm">
+                <input type="hidden" id="processWithdrawalId">
+                <input type="hidden" id="processWithdrawalUserId">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">User</label>
+                    <p class="text-gray-800 font-medium" id="processWithdrawalUser"></p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Amount</label>
+                    <p class="text-gray-800 font-medium" id="processWithdrawalAmount"></p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Payment Method</label>
+                    <p class="text-gray-800 font-medium" id="processWithdrawalMethod"></p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Account Details</label>
+                    <p class="text-gray-800 font-medium" id="processWithdrawalAccount"></p>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Status</label>
+                    <select id="processWithdrawalStatus" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="failed">Failed</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Admin Notes</label>
+                    <textarea id="processWithdrawalNotes" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Enter any notes about this withdrawal"></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="hideProcessWithdrawalModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 flex items-center animate__animated animate__fadeIn">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mr-4"></div>
+            <span class="text-lg">Processing...</span>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="fixed top-4 right-4 z-50 space-y-3 w-full max-w-sm"></div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJNbJiCOgPt4-vjoNjnZzhHV8PfWU-v5s",
+            authDomain: "leo-microtask10.firebaseapp.com",
+            databaseURL: "https://leo-microtask10-default-rtdb.firebaseio.com",
+            projectId: "leo-microtask10",
+            storageBucket: "leo-microtask10.firebasestorage.app",
+            messagingSenderId: "641212738765",
+            appId: "1:641212738765:web:320c12246de0a44dbd0d84",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Admin credentials
+        const ADMIN_EMAIL = 'admin@taskearn.com';
+        const ADMIN_PASSWORD = 'admin123';
+
+        // Global variables
+        let currentAdmin = null;
+        let allTasks = {};
+        let allUsers = {};
+        let allUserTasks = {};
+        let allWithdrawals = [];
+        let currentTab = 'dashboard';
+        let currentWithdrawalTab = 'pending';
+        let currentApprovalFilter = 'all';
+
+        // DOM Elements
+        const adminLogin = document.getElementById('adminLogin');
+        const adminPanel = document.getElementById('adminPanel');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const messageContainer = document.getElementById('messageContainer');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userMenu = document.getElementById('userMenu');
+
+        // Initialize admin user if not exists
+        async function initializeAdmin() {
+            try {
+                await auth.createUserWithEmailAndPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
+                console.log('Admin user created');
+            } catch (error) {
+                if (error.code !== 'auth/email-already-in-use') {
+                    console.error('Error creating admin:', error);
+                }
+            }
+        }
+
+        // Initialize admin on page load
+        initializeAdmin();
+
+        // Auth state observer
+        auth.onAuthStateChanged((user) => {
+            if (user && user.email === ADMIN_EMAIL) {
+                currentAdmin = user;
+                showAdminDashboard();
+                loadAdminData();
+            } else {
+                currentAdmin = null;
+                showAdminAuth();
+            }
+        });
+
+        // Show/Hide sections
+        function showAdminAuth() {
+            adminLogin.classList.remove('hidden');
+            adminPanel.classList.add('hidden');
+        }
+
+        function showAdminDashboard() {
+            adminLogin.classList.add('hidden');
+            adminPanel.classList.remove('hidden');
+            document.getElementById('pageTitle').textContent = 'Dashboard';
+            openTab('dashboard');
+        }
+
+        // Admin login form handler
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            if (email !== ADMIN_EMAIL) {
+                showMessage('Invalid admin credentials', 'error');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('Admin login successful!', 'success');
+            } catch (error) {
+                showMessage(getAuthErrorMessage(error), 'error');
+            }
+            showLoading(false);
+        });
+
+        // Admin logout
+        function adminLogout() {
+            auth.signOut();
+        }
+
+        // Load admin data
+        function loadAdminData() {
+            // Load all tasks
+            database.ref('tasks').on('value', (snapshot) => {
+                allTasks = snapshot.val() || {};
+                updateTasksStats();
+                if (currentTab === 'tasks') {
+                    displayTasksTable();
+                }
+            });
+
+            // Load all users
+            database.ref('users').on('value', (snapshot) => {
+                allUsers = snapshot.val() || {};
+                updateUsersStats();
+                if (currentTab === 'users') {
+                    displayUsersTable();
+                }
+                if (currentTab === 'dashboard') {
+                    displayRecentUsers();
+                }
+            });
+
+            // Load all user tasks
+            database.ref('userTasks').on('value', (snapshot) => {
+                allUserTasks = snapshot.val() || {};
+                updateApprovalsStats();
+                if (currentTab === 'approvals') {
+                    displayApprovalsList();
+                }
+            });
+
+            // Load all withdrawals
+            database.ref('withdrawals').on('value', (snapshot) => {
+                allWithdrawals = [];
+                snapshot.forEach(userSnapshot => {
+                    userSnapshot.forEach(withdrawalSnapshot => {
+                        const withdrawal = {
+                            id: withdrawalSnapshot.key,
+                            userId: userSnapshot.key,
+                            ...withdrawalSnapshot.val()
+                        };
+                        allWithdrawals.push(withdrawal);
+                    });
+                });
+                
+                updateWithdrawalsStats();
+                if (currentTab === 'withdrawals') {
+                    displayWithdrawalsTable();
+                }
+                if (currentTab === 'dashboard') {
+                    displayRecentWithdrawals();
+                }
+            });
+
+            // Load recent activity
+            loadRecentActivity();
+        }
+
+        // Update stats
+        function updateTasksStats() {
+            document.getElementById('totalTasks').textContent = Object.keys(allTasks).length;
+        }
+
+        function updateUsersStats() {
+            document.getElementById('totalUsers').textContent = Object.keys(allUsers).length;
+            
+            const totalPayouts = Object.values(allUsers).reduce((sum, user) => sum + (user.withdrawnAmount || 0), 0);
+            document.getElementById('totalPayouts').textContent = `$${totalPayouts.toFixed(2)}`;
+        }
+
+        function updateApprovalsStats() {
+            let pendingCount = 0;
+            Object.values(allUserTasks).forEach(userTasks => {
+                Object.values(userTasks).forEach(task => {
+                    if (task.status === 'pending_approval') {
+                        pendingCount++;
+                    }
+                });
+            });
+            document.getElementById('pendingApprovals').textContent = pendingCount;
+        }
+
+        function updateWithdrawalsStats() {
+            const pendingWithdrawals = allWithdrawals.filter(w => w.status === 'pending');
+            const completedWithdrawals = allWithdrawals.filter(w => w.status === 'completed');
+            
+            document.getElementById('pendingWithdrawals').textContent = pendingWithdrawals.length;
+            document.getElementById('completedWithdrawals').textContent = completedWithdrawals.length;
+        }
+
+        // Tab switching
+        function openTab(tabName) {
+            currentTab = tabName;
+            
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('bg-primary-50', 'text-primary-700');
+                button.classList.add('text-gray-600', 'hover:bg-gray-50');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.remove('hidden');
+            document.getElementById(tabName).classList.add('animate__fadeIn');
+
+            // Add active class to selected tab
+            const activeTab = document.querySelector(`.tab-button[onclick="openTab('${tabName}')`);
+            activeTab.classList.remove('text-gray-600', 'hover:bg-gray-50');
+            activeTab.classList.add('bg-primary-50', 'text-primary-700');
+
+            // Update page title
+            document.getElementById('pageTitle').textContent = activeTab.textContent.trim();
+
+            // Load data if needed
+            switch (tabName) {
+                case 'dashboard':
+                    loadRecentActivity();
+                    displayRecentUsers();
+                    displayRecentWithdrawals();
+                    break;
+                case 'tasks':
+                    displayTasksTable();
+                    break;
+                case 'users':
+                    displayUsersTable();
+                    break;
+                case 'withdrawals':
+                    displayWithdrawalsTable();
+                    break;
+                case 'approvals':
+                    displayApprovalsList();
+                    break;
+            }
+        }
+
+        // Withdrawal tab navigation
+        function openWithdrawalTab(status) {
+            currentWithdrawalTab = status;
+            
+            // Update tabs
+            document.querySelectorAll('.withdrawal-tab').forEach(tab => {
+                tab.classList.remove('border-primary-500', 'text-primary-600');
+                tab.classList.add('border-transparent', 'text-gray-500');
+            });
+            
+            const activeTab = document.querySelector(`.withdrawal-tab[onclick="openWithdrawalTab('${status}')"]`);
+            activeTab.classList.remove('border-transparent', 'text-gray-500');
+            activeTab.classList.add('border-primary-500', 'text-primary-600');
+            
+            // Load data
+            displayWithdrawalsTable();
+        }
+
+        // Approval filter
+        function filterApprovals(status) {
+            currentApprovalFilter = status;
+            
+            // Update filter buttons
+            document.querySelectorAll('.approval-filter').forEach(button => {
+                button.classList.remove('bg-primary-100', 'text-primary-700', 'bg-warning-100', 'text-warning-700', 'bg-success-100', 'text-success-700', 'bg-danger-100', 'text-danger-700');
+                
+                if (button.getAttribute('onclick').includes(status)) {
+                    switch (status) {
+                        case 'all':
+                            button.classList.add('bg-primary-100', 'text-primary-700');
+                            break;
+                        case 'pending':
+                            button.classList.add('bg-warning-100', 'text-warning-700');
+                            break;
+                        case 'approved':
+                            button.classList.add('bg-success-100', 'text-success-700');
+                            break;
+                        case 'rejected':
+                            button.classList.add('bg-danger-100', 'text-danger-700');
+                            break;
+                    }
+                }
+            });
+            
+            // Load data
+            displayApprovalsList();
+        }
+
+        // Display tasks table
+        function displayTasksTable() {
+            const tasksTable = document.getElementById('tasksTable');
+            tasksTable.innerHTML = '';
+
+            const filteredTasks = Object.entries(allTasks).filter(([id, task]) => {
+                const statusFilter = document.getElementById('taskStatusFilter').value;
+                if (statusFilter === 'all') return true;
+                return task.status === statusFilter;
+            });
+
+            if (filteredTasks.length === 0) {
+                tasksTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            No tasks found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredTasks.forEach(([taskId, task]) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${task.title}</div>
+                        <div class="text-sm text-gray-500 truncate max-w-xs">${task.description}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-success-600 font-bold">$${task.reward.toFixed(2)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${task.estimatedTime} min</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${task.status === 'active' ? 'bg-success-100 text-success-800' : 'bg-gray-100 text-gray-800'}">
+                            ${task.status === 'active' ? 'Active' : 'Inactive'}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${new Date(task.createdAt).toLocaleDateString()}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editTask('${taskId}')" class="text-primary-600 hover:text-primary-900 mr-3">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button onclick="deleteTask('${taskId}')" class="text-danger-600 hover:text-danger-900">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tasksTable.appendChild(row);
+            });
+        }
+
+        // Display users table
+        function displayUsersTable() {
+            const usersTable = document.getElementById('usersTable');
+            usersTable.innerHTML = '';
+
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const filteredUsers = Object.entries(allUsers).filter(([id, user]) => {
+                return user.name.toLowerCase().includes(searchTerm) || 
+                       user.email.toLowerCase().includes(searchTerm);
+            });
+
+            if (filteredUsers.length === 0) {
+                usersTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            No users found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredUsers.forEach(([userId, user]) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                const withdrawable = (user.totalEarnings || 0) - (user.withdrawnAmount || 0);
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                                ${user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
+                                <div class="text-sm text-gray-500">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${user.email}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-success-600 font-bold">$${(user.totalEarnings || 0).toFixed(2)}</div>
+                        <div class="text-xs text-gray-500">Available: $${withdrawable.toFixed(2)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${user.completedTasks || 0}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${new Date(user.joinedAt).toLocaleDateString()}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="editUser('${userId}')" class="text-primary-600 hover:text-primary-900">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </td>
+                `;
+                
+                usersTable.appendChild(row);
+            });
+        }
+
+        // Display withdrawals table
+        function displayWithdrawalsTable() {
+            const withdrawalsTable = document.getElementById('withdrawalsTable');
+            withdrawalsTable.innerHTML = '';
+
+            const filteredWithdrawals = allWithdrawals.filter(withdrawal => {
+                if (currentWithdrawalTab === 'all') return true;
+                return withdrawal.status === currentWithdrawalTab;
+            });
+
+            if (filteredWithdrawals.length === 0) {
+                withdrawalsTable.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            No ${currentWithdrawalTab} withdrawals found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            filteredWithdrawals.forEach(withdrawal => {
+                const user = allUsers[withdrawal.userId] || {};
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                switch (withdrawal.status) {
+                    case 'pending':
+                        statusClass = 'bg-warning-100 text-warning-800';
+                        statusText = 'Pending';
+                        break;
+                    case 'completed':
+                        statusClass = 'bg-success-100 text-success-800';
+                        statusText = 'Completed';
+                        break;
+                    case 'failed':
+                        statusClass = 'bg-danger-100 text-danger-800';
+                        statusText = 'Failed';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${new Date(withdrawal.requestedAt).toLocaleDateString()}</div>
+                        <div class="text-xs text-gray-500">${new Date(withdrawal.requestedAt).toLocaleTimeString()}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${user.name || 'User'}</div>
+                        <div class="text-xs text-gray-500">${user.email || ''}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-success-600 font-bold">$${withdrawal.amount.toFixed(2)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${capitalizeFirstLetter(withdrawal.method)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <button onclick="processWithdrawalModal('${withdrawal.userId}', '${withdrawal.id}')" class="text-primary-600 hover:text-primary-900">
+                            <i class="fas fa-edit"></i> Process
+                        </button>
+                    </td>
+                `;
+                
+                withdrawalsTable.appendChild(row);
+            });
+        }
+
+        // Display approvals list
+        function displayApprovalsList() {
+            const approvalsList = document.getElementById('approvalsList');
+            approvalsList.innerHTML = '';
+
+            let approvals = [];
+            
+            Object.entries(allUserTasks).forEach(([userId, userTasks]) => {
+                Object.entries(userTasks).forEach(([taskId, userTask]) => {
+                    const task = allTasks[taskId];
+                    const user = allUsers[userId];
+                    
+                    if (task && user) {
+                        const approval = {
+                            userId,
+                            taskId,
+                            task,
+                            user,
+                            userTask
+                        };
+                        
+                        if (currentApprovalFilter === 'all' || 
+                            (currentApprovalFilter === 'pending' && userTask.status === 'pending_approval') ||
+                            (currentApprovalFilter === 'approved' && userTask.status === 'completed') ||
+                            (currentApprovalFilter === 'rejected' && userTask.status === 'rejected')) {
+                            approvals.push(approval);
+                        }
+                    }
+                });
+            });
+
+            if (approvals.length === 0) {
+                approvalsList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <i class="fas fa-tasks text-2xl mb-2"></i>
+                        <p>No ${currentApprovalFilter === 'all' ? '' : currentApprovalFilter} task approvals found</p>
+                    </div>
+                `;
+                return;
+            }
+
+            approvals.forEach(({userId, taskId, task, user, userTask}) => {
+                const div = document.createElement('div');
+                div.className = 'p-5 hover:bg-gray-50 transition duration-200';
+                
+                let statusBadge = '';
+                let actionButtons = '';
+                
+                if (userTask.status === 'pending_approval') {
+                    statusBadge = '<span class="bg-warning-100 text-warning-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Pending Approval</span>';
+                    actionButtons = `
+                        <div class="flex space-x-2">
+                            <button onclick="approveTask('${userId}', '${taskId}')" class="bg-success-600 hover:bg-success-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-check mr-1"></i> Approve
+                            </button>
+                            <button onclick="rejectTask('${userId}', '${taskId}')" class="bg-danger-600 hover:bg-danger-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                                <i class="fas fa-times mr-1"></i> Reject
+                            </button>
+                        </div>
+                    `;
+                } else if (userTask.status === 'completed') {
+                    statusBadge = '<span class="bg-success-100 text-success-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Approved</span>';
+                    actionButtons = `
+                        <div class="text-success-600 font-medium">
+                            <i class="fas fa-check-circle mr-1"></i> Approved
+                        </div>
+                    `;
+                } else if (userTask.status === 'rejected') {
+                    statusBadge = '<span class="bg-danger-100 text-danger-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Rejected</span>';
+                    actionButtons = `
+                        <div class="text-danger-600 font-medium">
+                            <i class="fas fa-times-circle mr-1"></i> Rejected
+                        </div>
+                    `;
+                }
+                
+                div.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">${task.title}</h3>
+                            <p class="text-sm text-gray-600">Completed by: ${user.name} (${user.email})</p>
+                        </div>
+                        ${statusBadge}
+                    </div>
+                    <p class="text-gray-600 mb-3">${task.description}</p>
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                        <div class="flex items-center space-x-4">
+                            <span class="text-success-600 font-bold">$${task.reward.toFixed(2)}</span>
+                            <span class="text-gray-500 text-sm">
+                                <i class="fas fa-clock mr-1"></i>
+                                ${task.estimatedTime} min
+                            </span>
+                            <span class="text-gray-500 text-sm">
+                                <i class="fas fa-calendar-alt mr-1"></i>
+                                ${new Date(userTask.completedAt).toLocaleDateString()}
+                            </span>
+                        </div>
+                        <div class="w-full sm:w-auto">
+                            ${actionButtons}
+                        </div>
+                    </div>
+                `;
+                
+                approvalsList.appendChild(div);
+            });
+        }
+
+        // Display recent activity
+        function loadRecentActivity() {
+            const recentActivity = document.getElementById('recentActivity');
+            recentActivity.innerHTML = '';
+
+            // Combine withdrawals and task approvals for activity feed
+            const activities = [];
+            
+            // Add withdrawals
+            allWithdrawals.forEach(withdrawal => {
+                const user = allUsers[withdrawal.userId] || {};
+                activities.push({
+                    type: 'withdrawal',
+                    date: withdrawal.requestedAt,
+                    user: user.name || 'User',
+                    amount: withdrawal.amount,
+                    status: withdrawal.status
+                });
+            });
+            
+            // Add task approvals
+            Object.entries(allUserTasks).forEach(([userId, userTasks]) => {
+                Object.entries(userTasks).forEach(([taskId, userTask]) => {
+                    if (userTask.status === 'completed' || userTask.status === 'rejected') {
+                        const task = allTasks[taskId];
+                        const user = allUsers[userId] || {};
+                        
+                        if (task) {
+                            activities.push({
+                                type: 'task',
+                                date: userTask.status === 'completed' ? userTask.approvedAt : userTask.rejectedAt,
+                                user: user.name || 'User',
+                                task: task.title,
+                                status: userTask.status
+                            });
+                        }
+                    }
+                });
+            });
+            
+            // Sort by date (newest first)
+            activities.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Show last 5
+            const recentActivities = activities.slice(0, 5);
+            
+            if (recentActivities.length === 0) {
+                recentActivity.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            No recent activity
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            recentActivities.forEach(activity => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                let statusClass = '';
+                let statusText = '';
+                let actionText = '';
+                
+                if (activity.type === 'withdrawal') {
+                    actionText = 'Withdrawal';
+                    
+                    switch (activity.status) {
+                        case 'pending':
+                            statusClass = 'bg-warning-100 text-warning-800';
+                            statusText = 'Pending';
+                            break;
+                        case 'completed':
+                            statusClass = 'bg-success-100 text-success-800';
+                            statusText = 'Completed';
+                            break;
+                        case 'failed':
+                            statusClass = 'bg-danger-100 text-danger-800';
+                            statusText = 'Failed';
+                            break;
+                    }
+                } else {
+                    actionText = `Task: ${activity.task}`;
+                    
+                    if (activity.status === 'completed') {
+                        statusClass = 'bg-success-100 text-success-800';
+                        statusText = 'Approved';
+                    } else {
+                        statusClass = 'bg-danger-100 text-danger-800';
+                        statusText = 'Rejected';
+                    }
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${new Date(activity.date).toLocaleDateString()}</div>
+                        <div class="text-xs text-gray-500">${new Date(activity.date).toLocaleTimeString()}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${activity.user}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${actionText}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-900">${activity.type === 'withdrawal' ? '$' + activity.amount.toFixed(2) : ''}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                `;
+                
+                recentActivity.appendChild(row);
+            });
+            
+            // Update last updated time
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
+        }
+
+        // Display recent users
+        function displayRecentUsers() {
+            const recentUsers = document.getElementById('recentUsers');
+            recentUsers.innerHTML = '';
+
+            const users = Object.values(allUsers)
+                .sort((a, b) => new Date(b.joinedAt) - new Date(a.joinedAt))
+                .slice(0, 5);
+            
+            if (users.length === 0) {
+                recentUsers.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            No users found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                                ${user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${user.name}</div>
+                                <div class="text-sm text-gray-500">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-gray-500">${new Date(user.joinedAt).toLocaleDateString()}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-success-600 font-bold">$${(user.totalEarnings || 0).toFixed(2)}</div>
+                    </td>
+                `;
+                
+                recentUsers.appendChild(row);
+            });
+        }
+
+        // Display recent withdrawals
+        function displayRecentWithdrawals() {
+            const recentWithdrawals = document.getElementById('recentWithdrawals');
+            recentWithdrawals.innerHTML = '';
+
+            const withdrawals = allWithdrawals
+                .sort((a, b) => new Date(b.requestedAt) - new Date(a.requestedAt))
+                .slice(0, 5);
+            
+            if (withdrawals.length === 0) {
+                recentWithdrawals.innerHTML = `
+                    <tr>
+                        <td colspan="3" class="px-6 py-4 whitespace-nowrap text-center text-gray-500">
+                            No withdrawals found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            withdrawals.forEach(withdrawal => {
+                const user = allUsers[withdrawal.userId] || {};
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-gray-50';
+                
+                let statusClass = '';
+                let statusText = '';
+                
+                switch (withdrawal.status) {
+                    case 'pending':
+                        statusClass = 'bg-warning-100 text-warning-800';
+                        statusText = 'Pending';
+                        break;
+                    case 'completed':
+                        statusClass = 'bg-success-100 text-success-800';
+                        statusText = 'Completed';
+                        break;
+                    case 'failed':
+                        statusClass = 'bg-danger-100 text-danger-800';
+                        statusText = 'Failed';
+                        break;
+                }
+                
+                row.innerHTML = `
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm font-medium text-gray-900">${user.name || 'User'}</div>
+                        <div class="text-xs text-gray-500">${user.email || ''}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="text-sm text-success-600 font-bold">$${withdrawal.amount.toFixed(2)}</div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 py-1 text-xs rounded-full ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                `;
+                
+                recentWithdrawals.appendChild(row);
+            });
+        }
+
+        // Task management functions
+        function showCreateTaskModal() {
+            document.getElementById('createTaskModal').classList.remove('hidden');
+        }
+
+        function hideCreateTaskModal() {
+            document.getElementById('createTaskModal').classList.add('hidden');
+            document.getElementById('createTaskForm').reset();
+        }
+
+        function showEditTaskModal() {
+            document.getElementById('editTaskModal').classList.remove('hidden');
+        }
+
+        function hideEditTaskModal() {
+            document.getElementById('editTaskModal').classList.add('hidden');
+            document.getElementById('editTaskForm').reset();
+        }
+
+        // Create task form handler
+        document.getElementById('createTaskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const title = document.getElementById('taskTitle').value;
+            const description = document.getElementById('taskDescription').value;
+            const reward = parseFloat(document.getElementById('taskReward').value);
+            const estimatedTime = parseInt(document.getElementById('taskTime').value);
+
+            showLoading(true);
+            try {
+                const taskRef = database.ref('tasks').push();
+                await taskRef.set({
+                    title: title,
+                    description: description,
+                    reward: reward,
+                    estimatedTime: estimatedTime,
+                    status: 'active',
+                    createdAt: firebase.database.ServerValue.TIMESTAMP,
+                    createdBy: currentAdmin.uid
+                });
+
+                showMessage('Task created successfully!', 'success');
+                hideCreateTaskModal();
+            } catch (error) {
+                showMessage('Error creating task: ' + error.message, 'error');
+            }
+            showLoading(false);
+        });
+
+        // Edit task form handler
+        document.getElementById('editTaskForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const taskId = document.getElementById('editTaskId').value;
+            const title = document.getElementById('editTaskTitle').value;
+            const description = document.getElementById('editTaskDescription').value;
+            const reward = parseFloat(document.getElementById('editTaskReward').value);
+            const estimatedTime = parseInt(document.getElementById('editTaskTime').value);
+            const status = document.getElementById('editTaskStatus').value;
+
+            showLoading(true);
+            try {
+                await database.ref(`tasks/${taskId}`).update({
+                    title: title,
+                    description: description,
+                    reward: reward,
+                    estimatedTime: estimatedTime,
+                    status: status,
+                    updatedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                showMessage('Task updated successfully!', 'success');
+                hideEditTaskModal();
+            } catch (error) {
+                showMessage('Error updating task: ' + error.message, 'error');
+            }
+            showLoading(false);
+        });
+
+        // Edit task
+        function editTask(taskId) {
+            const task = allTasks[taskId];
+            if (task) {
+                document.getElementById('editTaskId').value = taskId;
+                document.getElementById('editTaskTitle').value = task.title;
+                document.getElementById('editTaskDescription').value = task.description;
+                document.getElementById('editTaskReward').value = task.reward;
+                document.getElementById('editTaskTime').value = task.estimatedTime;
+                document.getElementById('editTaskStatus').value = task.status;
+                showEditTaskModal();
+            }
+        }
+
+        // Delete task
+        async function deleteTask(taskId) {
+            if (confirm('Are you sure you want to delete this task?')) {
+                showLoading(true);
+                try {
+                    await database.ref(`tasks/${taskId}`).remove();
+                    showMessage('Task deleted successfully!', 'success');
+                } catch (error) {
+                    showMessage('Error deleting task: ' + error.message, 'error');
+                }
+                showLoading(false);
+            }
+        }
+
+        // User management functions
+        function showAddUserModal() {
+            document.getElementById('addUserModal').classList.remove('hidden');
+        }
+
+        function hideAddUserModal() {
+            document.getElementById('addUserModal').classList.add('hidden');
+            document.getElementById('addUserForm').reset();
+        }
+
+        function showEditUserModal() {
+            document.getElementById('editUserModal').classList.remove('hidden');
+        }
+
+        function hideEditUserModal() {
+            document.getElementById('editUserModal').classList.add('hidden');
+            document.getElementById('editUserForm').reset();
+        }
+
+        // Add user form handler
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('addUserName').value;
+            const email = document.getElementById('addUserEmail').value;
+            const password = document.getElementById('addUserPassword').value;
+            const balance = parseFloat(document.getElementById('addUserBalance').value) || 0;
+
+            if (password.length < 6) {
+                showMessage('Password must be at least 6 characters', 'error');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                // Create user profile in database
+                await database.ref(`users/${userCredential.user.uid}`).set({
+                    name: name,
+                    email: email,
+                    totalEarnings: balance,
+                    completedTasks: 0,
+                    pendingWithdrawals: 0,
+                    withdrawnAmount: 0,
+                    joinedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                showMessage('User added successfully!', 'success');
+                hideAddUserModal();
+            } catch (error) {
+                showMessage(getAuthErrorMessage(error), 'error');
+            }
+            showLoading(false);
+        });
+
+        // Edit user form handler
+        document.getElementById('editUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('editUserId').value;
+            const name = document.getElementById('editUserName').value;
+            const email = document.getElementById('editUserEmail').value;
+            const password = document.getElementById('editUserPassword').value;
+            const earnings = parseFloat(document.getElementById('editUserEarnings').value);
+            const completedTasks = parseInt(document.getElementById('editUserCompletedTasks').value);
+
+            showLoading(true);
+            try {
+                // Update user data
+                await database.ref(`users/${userId}`).update({
+                    name: name,
+                    email: email,
+                    totalEarnings: earnings,
+                    completedTasks: completedTasks
+                });
+
+                // Update email in auth if changed
+                if (email !== allUsers[userId].email) {
+                    const user = await auth.getUser(userId);
+                    await auth.updateUser(userId, {
+                        email: email,
+                        displayName: name
+                    });
+                }
+
+                // Update password if provided
+                if (password) {
+                    await auth.updateUser(userId, {
+                        password: password
+                    });
+                }
+
+                showMessage('User updated successfully!', 'success');
+                hideEditUserModal();
+            } catch (error) {
+                showMessage('Error updating user: ' + error.message, 'error');
+            }
+            showLoading(false);
+        });
+
+        // Edit user
+        function editUser(userId) {
+            const user = allUsers[userId];
+            if (user) {
+                document.getElementById('editUserId').value = userId;
+                document.getElementById('editUserName').value = user.name;
+                document.getElementById('editUserEmail').value = user.email;
+                document.getElementById('editUserEarnings').value = user.totalEarnings || 0;
+                document.getElementById('editUserCompletedTasks').value = user.completedTasks || 0;
+                showEditUserModal();
+            }
+        }
+
+        // Confirm delete user
+        function confirmDeleteUser() {
+            if (confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                deleteUser();
+            }
+        }
+
+        // Delete user
+        async function deleteUser() {
+            const userId = document.getElementById('editUserId').value;
+            
+            showLoading(true);
+            try {
+                // Delete user from authentication
+                await auth.deleteUser(userId);
+                
+                // Delete user data from database
+                await database.ref(`users/${userId}`).remove();
+                
+                // Delete user's tasks and withdrawals
+                await database.ref(`userTasks/${userId}`).remove();
+                await database.ref(`withdrawals/${userId}`).remove();
+                
+                showMessage('User deleted successfully!', 'success');
+                hideEditUserModal();
+            } catch (error) {
+                showMessage('Error deleting user: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Withdrawal management functions
+        function showProcessWithdrawalModal() {
+            document.getElementById('processWithdrawalModal').classList.remove('hidden');
+        }
+
+        function hideProcessWithdrawalModal() {
+            document.getElementById('processWithdrawalModal').classList.add('hidden');
+            document.getElementById('processWithdrawalForm').reset();
+        }
+
+        // Process withdrawal modal
+        function processWithdrawalModal(userId, withdrawalId) {
+            const withdrawal = allWithdrawals.find(w => w.userId === userId && w.id === withdrawalId);
+            const user = allUsers[userId] || {};
+            
+            if (withdrawal) {
+                document.getElementById('processWithdrawalId').value = withdrawalId;
+                document.getElementById('processWithdrawalUserId').value = userId;
+                document.getElementById('processWithdrawalUser').textContent = user.name || 'User';
+                document.getElementById('processWithdrawalAmount').textContent = '$' + withdrawal.amount.toFixed(2);
+                document.getElementById('processWithdrawalMethod').textContent = capitalizeFirstLetter(withdrawal.method);
+                
+                // Format account details based on method
+                let accountDetails = '';
+                if (withdrawal.method === 'paypal') {
+                    accountDetails = withdrawal.paypalEmail;
+                } else if (withdrawal.method === 'bank') {
+                    accountDetails = `${withdrawal.bankName} - ${withdrawal.accountNumber}`;
+                } else if (withdrawal.method === 'crypto') {
+                    accountDetails = `${withdrawal.cryptoWallet} (${withdrawal.cryptoNetwork})`;
+                }
+                
+                document.getElementById('processWithdrawalAccount').textContent = accountDetails;
+                document.getElementById('processWithdrawalStatus').value = withdrawal.status;
+                document.getElementById('processWithdrawalNotes').value = withdrawal.adminNotes || '';
+                
+                showProcessWithdrawalModal();
+            }
+        }
+
+        // Process withdrawal form handler
+        document.getElementById('processWithdrawalForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const withdrawalId = document.getElementById('processWithdrawalId').value;
+            const userId = document.getElementById('processWithdrawalUserId').value;
+            const status = document.getElementById('processWithdrawalStatus').value;
+            const notes = document.getElementById('processWithdrawalNotes').value;
+            
+            const withdrawal = allWithdrawals.find(w => w.userId === userId && w.id === withdrawalId);
+            if (!withdrawal) {
+                showMessage('Withdrawal not found', 'error');
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const updates = {
+                    status: status,
+                    adminNotes: notes,
+                    processedAt: firebase.database.ServerValue.TIMESTAMP
+                };
+                
+                // Update withdrawal status
+                await database.ref(`withdrawals/${userId}/${withdrawalId}`).update(updates);
+                
+                // If status is completed, update user's withdrawn amount
+                if (status === 'completed') {
+                    const user = allUsers[userId] || {};
+                    const newWithdrawnAmount = (user.withdrawnAmount || 0) + withdrawal.amount;
+                    const newPendingWithdrawals = (user.pendingWithdrawals || 0) - withdrawal.amount;
+                    
+                    await database.ref(`users/${userId}`).update({
+                        withdrawnAmount: newWithdrawnAmount,
+                        pendingWithdrawals: newPendingWithdrawals
+                    });
+                }
+                
+                showMessage('Withdrawal processed successfully!', 'success');
+                hideProcessWithdrawalModal();
+            } catch (error) {
+                showMessage('Error processing withdrawal: ' + error.message, 'error');
+            }
+            showLoading(false);
+        });
+
+        // Approve task
+        async function approveTask(userId, taskId) {
+            showLoading(true);
+            try {
+                const task = allTasks[taskId];
+                const user = allUsers[userId];
+                
+                if (!task || !user) {
+                    throw new Error('Task or user not found');
+                }
+                
+                // Update user task status
+                await database.ref(`userTasks/${userId}/${taskId}`).update({
+                    status: 'completed',
+                    approvedAt: firebase.database.ServerValue.TIMESTAMP,
+                    approvedBy: currentAdmin.uid
+                });
+
+                // Update user earnings and completed tasks count
+                const newEarnings = (user.totalEarnings || 0) + task.reward;
+                const newCompletedTasks = (user.completedTasks || 0) + 1;
+                
+                await database.ref(`users/${userId}`).update({
+                    totalEarnings: newEarnings,
+                    completedTasks: newCompletedTasks
+                });
+
+                showMessage('Task approved successfully!', 'success');
+            } catch (error) {
+                showMessage('Error approving task: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Reject task
+        async function rejectTask(userId, taskId) {
+            if (confirm('Are you sure you want to reject this task completion?')) {
+                showLoading(true);
+                try {
+                    await database.ref(`userTasks/${userId}/${taskId}`).update({
+                        status: 'rejected',
+                        rejectedAt: firebase.database.ServerValue.TIMESTAMP,
+                        rejectedBy: currentAdmin.uid
+                    });
+
+                    showMessage('Task rejected successfully!', 'success');
+                } catch (error) {
+                    showMessage('Error rejecting task: ' + error.message, 'error');
+                }
+                showLoading(false);
+            }
+        }
+
+        // Refresh data
+        function refreshData() {
+            showLoading(true);
+            loadAdminData();
+            setTimeout(() => {
+                showLoading(false);
+                showMessage('Data refreshed successfully!', 'success');
+            }, 1000);
+        }
+
+        // Refresh approvals
+        function refreshApprovals() {
+            showLoading(true);
+            database.ref('userTasks').once('value').then((snapshot) => {
+                allUserTasks = snapshot.val() || {};
+                displayApprovalsList();
+                showLoading(false);
+                showMessage('Approvals refreshed successfully!', 'success');
+            });
+        }
+
+        // Reset general settings
+        function resetGeneralSettings() {
+            document.getElementById('minWithdrawal').value = '5.00';
+            document.getElementById('currency').value = 'USD';
+            document.getElementById('minTaskReward').value = '';
+            document.getElementById('maxTaskReward').value = '';
+            document.getElementById('minTaskTime').value = '';
+            document.getElementById('maxTaskTime').value = '';
+        }
+
+        // Utility functions
+        function showLoading(show) {
+            if (show) {
+                loadingSpinner.classList.remove('hidden');
+            } else {
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-4 rounded-lg shadow-md ${type === 'success' ? 'bg-success-100 text-success-700 border border-success-200' : 'bg-danger-100 text-danger-700 border border-danger-200'}`;
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            messageContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => {
+                    if (messageContainer.contains(messageDiv)) {
+                        messageContainer.removeChild(messageDiv);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        function getAuthErrorMessage(error) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    return 'Invalid email address';
+                case 'auth/user-disabled':
+                    return 'Account disabled';
+                case 'auth/user-not-found':
+                    return 'Account not found';
+                case 'auth/wrong-password':
+                    return 'Incorrect password';
+                case 'auth/email-already-in-use':
+                    return 'Email already in use';
+                case 'auth/weak-password':
+                    return 'Password should be at least 6 characters';
+                default:
+                    return error.message;
+            }
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
+
+        // Event listeners
+        sidebarToggle.addEventListener('click', () => {
+            const sidebar = document.querySelector('.fixed.inset-y-0.left-0');
+            sidebar.classList.toggle('-translate-x-full');
+        });
+
+        userMenuButton.addEventListener('click', () => {
+            userMenu.classList.toggle('hidden');
+        });
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!userMenu.contains(e.target) && !userMenuButton.contains(e.target)) {
+                userMenu.classList.add('hidden');
+            }
+        });
+
+        // Search functionality
+        document.getElementById('taskSearch').addEventListener('input', () => {
+            displayTasksTable();
+        });
+
+        document.getElementById('userSearch').addEventListener('input', () => {
+            displayUsersTable();
+        });
+
+        document.getElementById('withdrawalSearch').addEventListener('input', () => {
+            displayWithdrawalsTable();
+        });
+
+        document.getElementById('taskStatusFilter').addEventListener('change', () => {
+            displayTasksTable();
+        });
+
+        document.getElementById('withdrawalDateFilter').addEventListener('change', () => {
+            displayWithdrawalsTable();
+        });
+    </script>
+</body>
+</html>

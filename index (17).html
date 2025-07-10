@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskEarn - Micro Task Platform</title>
+    <meta name="description" content="Earn money by completing micro tasks online">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        success: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        warning: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                        danger: {
+                            50: '#fef2f2',
+                            100: '#fee2e2',
+                            200: '#fecaca',
+                            300: '#fca5a5',
+                            400: '#f87171',
+                            500: '#ef4444',
+                            600: '#dc2626',
+                            700: '#b91c1c',
+                            800: '#991b1b',
+                            900: '#7f1d1d',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body class="bg-gradient-to-br from-primary-50 to-gray-50 min-h-screen font-sans">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-3">
+                <div class="flex items-center">
+                    <i class="fas fa-tasks text-primary-600 text-2xl mr-2"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">Task<span class="text-primary-600">Earn</span></h1>
+                </div>
+                <div id="navButtons" class="flex items-center space-x-4">
+                    <!-- Will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Auth Section -->
+        <div id="authSection" class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8 animate__animated animate__fadeIn">
+            <div class="text-center mb-6">
+                <i class="fas fa-tasks text-primary-500 text-5xl mb-4"></i>
+                <h2 class="text-3xl font-bold text-gray-800">Welcome to TaskEarn</h2>
+                <p class="text-gray-600 mt-2">Complete tasks and earn money instantly</p>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Login to your account</h3>
+                <form id="loginFormElement">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                        <input type="email" id="loginEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="your@email.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                        <input type="password" id="loginPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                        Login
+                    </button>
+                </form>
+                <p class="text-center mt-4 text-gray-600">
+                    Don't have an account? 
+                    <button id="showSignup" class="text-primary-600 hover:text-primary-800 font-medium hover:underline">Sign up</button>
+                </p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" class="hidden">
+                <h3 class="text-lg font-semibold mb-4 text-gray-800">Create your account</h3>
+                <form id="signupFormElement">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Full Name</label>
+                        <input type="text" id="signupName" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="John Doe" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                        <input type="email" id="signupEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="your@email.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+                        <input type="password" id="signupPassword" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200" placeholder="••••••••" required>
+                        <p class="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
+                    </div>
+                    <button type="submit" class="w-full bg-success-600 hover:bg-success-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                        Create Account
+                    </button>
+                </form>
+                <p class="text-center mt-4 text-gray-600">
+                    Already have an account? 
+                    <button id="showLogin" class="text-primary-600 hover:text-primary-800 font-medium hover:underline">Login</button>
+                </p>
+            </div>
+        </div>
+
+        <!-- Dashboard Section -->
+        <div id="dashboardSection" class="hidden animate__animated animate__fadeIn">
+            <!-- Welcome Banner -->
+            <div class="bg-gradient-to-r from-primary-500 to-primary-700 rounded-xl shadow-md p-6 mb-8 text-white">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <div>
+                        <h2 class="text-2xl font-bold mb-2">Welcome back, <span id="welcomeName"></span>!</h2>
+                        <p class="opacity-90">Complete tasks and grow your earnings today</p>
+                    </div>
+                    <button onclick="showWithdrawModal()" class="mt-4 md:mt-0 bg-white text-primary-700 hover:bg-gray-100 font-medium py-2 px-6 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
+                        <i class="fas fa-wallet mr-2"></i> Withdraw Earnings
+                    </button>
+                </div>
+            </div>
+
+            <!-- User Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-primary-100 text-primary-600 mr-4">
+                            <i class="fas fa-coins text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Total Earnings</h3>
+                            <p id="totalEarnings" class="text-2xl font-bold text-success-600">$0.00</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-success-100 text-success-600 mr-4">
+                            <i class="fas fa-check-circle text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Completed Tasks</h3>
+                            <p id="completedTasks" class="text-2xl font-bold text-primary-600">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-warning-100 text-warning-600 mr-4">
+                            <i class="fas fa-clock text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">Pending Tasks</h3>
+                            <p id="pendingTasks" class="text-2xl font-bold text-warning-600">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Available Tasks -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-gray-800">Available Tasks</h2>
+                    <button onclick="refreshTasks()" class="text-primary-600 hover:text-primary-800">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh
+                    </button>
+                </div>
+                <div id="tasksList" class="divide-y divide-gray-100">
+                    <!-- Tasks will be populated by JavaScript -->
+                    <div class="p-8 text-center text-gray-500">
+                        <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
+                        <p>Loading tasks...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- My Tasks -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                <div class="px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-xl font-bold text-gray-800">My Tasks</h2>
+                </div>
+                <div id="myTasksList" class="divide-y divide-gray-100">
+                    <!-- User's tasks will be populated by JavaScript -->
+                    <div class="p-8 text-center text-gray-500">
+                        <i class="fas fa-tasks text-2xl mb-2"></i>
+                        <p>You haven't accepted any tasks yet</p>
+                        <p class="text-sm mt-2">Accept tasks from above to get started</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">Withdraw Earnings</h3>
+                <button onclick="hideWithdrawModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Amount ($)</label>
+                <input type="number" id="withdrawAmount" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="10.00" min="5" step="0.01">
+                <p class="text-xs text-gray-500 mt-1">Minimum withdrawal: $5.00</p>
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-medium mb-2">Payment Method</label>
+                <select id="withdrawMethod" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent">
+                    <option value="paypal">PayPal</option>
+                    <option value="bank">Bank Transfer</option>
+                    <option value="crypto">Cryptocurrency</option>
+                </select>
+            </div>
+            <div id="paymentDetails" class="mb-4">
+                <!-- Payment details fields will be shown based on method -->
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button onclick="hideWithdrawModal()" class="px-4 py-2 text-gray-600 hover:text-gray-800 font-medium">
+                    Cancel
+                </button>
+                <button onclick="submitWithdrawal()" class="px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition duration-200">
+                    Request Withdrawal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl p-6 flex items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mr-4"></div>
+            <span class="text-lg">Processing...</span>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="messageContainer" class="fixed top-4 right-4 z-50 space-y-3 w-full max-w-sm"></div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJNbJiCOgPt4-vjoNjnZzhHV8PfWU-v5s",
+            authDomain: "leo-microtask10.firebaseapp.com",
+            databaseURL: "https://leo-microtask10-default-rtdb.firebaseio.com",
+            projectId: "leo-microtask10",
+            storageBucket: "leo-microtask10.firebasestorage.app",
+            messagingSenderId: "641212738765",
+            appId: "1:641212738765:web:320c12246de0a44dbd0d84",
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // Global variables
+        let currentUser = null;
+        let userTasks = {};
+        let userData = {};
+        let allTasks = {};
+
+        // DOM Elements
+        const authSection = document.getElementById('authSection');
+        const dashboardSection = document.getElementById('dashboardSection');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const navButtons = document.getElementById('navButtons');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const messageContainer = document.getElementById('messageContainer');
+        const welcomeName = document.getElementById('welcomeName');
+
+        // Auth state observer
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                showDashboard();
+                loadUserData();
+                loadTasks();
+            } else {
+                currentUser = null;
+                showAuth();
+            }
+        });
+
+        // Show/Hide sections
+        function showAuth() {
+            authSection.classList.remove('hidden');
+            dashboardSection.classList.add('hidden');
+            navButtons.innerHTML = '';
+        }
+
+        function showDashboard() {
+            authSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            welcomeName.textContent = currentUser.displayName || currentUser.email.split('@')[0];
+            navButtons.innerHTML = `
+                <div class="hidden md:flex items-center space-x-4">
+                    <span class="text-gray-700 font-medium">${currentUser.displayName || currentUser.email.split('@')[0]}</span>
+                    <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                        ${(currentUser.displayName || currentUser.email).charAt(0).toUpperCase()}
+                    </div>
+                </div>
+                <button onclick="logout()" class="bg-danger-600 hover:bg-danger-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                    Logout
+                </button>
+            `;
+        }
+
+        // Toggle between login and signup forms
+        document.getElementById('showSignup').addEventListener('click', () => {
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+        });
+
+        document.getElementById('showLogin').addEventListener('click', () => {
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+        });
+
+        // Login form handler
+        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            showLoading(true);
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                showMessage('Login successful!', 'success');
+            } catch (error) {
+                showMessage(getAuthErrorMessage(error), 'error');
+            }
+            showLoading(false);
+        });
+
+        // Signup form handler
+        document.getElementById('signupFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+
+            showLoading(true);
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                await userCredential.user.updateProfile({ displayName: name });
+                
+                // Create user profile in database
+                await database.ref(`users/${userCredential.user.uid}`).set({
+                    name: name,
+                    email: email,
+                    totalEarnings: 0,
+                    completedTasks: 0,
+                    pendingWithdrawals: 0,
+                    withdrawnAmount: 0,
+                    joinedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+
+                showMessage('Account created successfully!', 'success');
+            } catch (error) {
+                showMessage(getAuthErrorMessage(error), 'error');
+            }
+            showLoading(false);
+        });
+
+        // Logout function
+        function logout() {
+            auth.signOut();
+        }
+
+        // Load user data
+        function loadUserData() {
+            database.ref(`users/${currentUser.uid}`).on('value', (snapshot) => {
+                userData = snapshot.val() || {};
+                updateUserStats();
+            });
+
+            // Load user's tasks
+            database.ref(`userTasks/${currentUser.uid}`).on('value', (snapshot) => {
+                userTasks = snapshot.val() || {};
+                updatePendingTasksCount();
+                loadMyTasks();
+            });
+        }
+
+        // Update user stats
+        function updateUserStats() {
+            document.getElementById('totalEarnings').textContent = `$${(userData.totalEarnings || 0).toFixed(2)}`;
+            document.getElementById('completedTasks').textContent = userData.completedTasks || 0;
+        }
+
+        // Load available tasks
+        function loadTasks() {
+            database.ref('tasks').on('value', (snapshot) => {
+                allTasks = snapshot.val() || {};
+                displayTasks(allTasks);
+            });
+        }
+
+        // Refresh tasks
+        function refreshTasks() {
+            showLoading(true);
+            database.ref('tasks').once('value').then((snapshot) => {
+                allTasks = snapshot.val() || {};
+                displayTasks(allTasks);
+                showLoading(false);
+            });
+        }
+
+        // Display tasks
+        function displayTasks(tasks) {
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = '';
+
+            const activeTasks = Object.keys(tasks).filter(taskId => 
+                tasks[taskId].status === 'active' && !userTasks[taskId]
+            );
+
+            if (activeTasks.length === 0) {
+                tasksList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <i class="fas fa-tasks text-2xl mb-2"></i>
+                        <p>No available tasks at the moment</p>
+                        <p class="text-sm mt-2">Check back later for new tasks</p>
+                    </div>
+                `;
+                return;
+            }
+
+            activeTasks.forEach(taskId => {
+                const task = tasks[taskId];
+                const taskElement = createTaskElement(task, taskId, 'available');
+                tasksList.appendChild(taskElement);
+            });
+        }
+
+        // Load my tasks
+        function loadMyTasks() {
+            const myTasksList = document.getElementById('myTasksList');
+            myTasksList.innerHTML = '';
+
+            if (Object.keys(userTasks).length === 0) {
+                myTasksList.innerHTML = `
+                    <div class="p-8 text-center text-gray-500">
+                        <i class="fas fa-tasks text-2xl mb-2"></i>
+                        <p>You haven't accepted any tasks yet</p>
+                        <p class="text-sm mt-2">Accept tasks from above to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            Object.keys(userTasks).forEach(taskId => {
+                database.ref(`tasks/${taskId}`).once('value', (snapshot) => {
+                    const task = snapshot.val();
+                    if (task) {
+                        const userTask = userTasks[taskId];
+                        const taskElement = createTaskElement(task, taskId, 'my', userTask);
+                        myTasksList.appendChild(taskElement);
+                    }
+                });
+            });
+        }
+
+        // Create task element
+        function createTaskElement(task, taskId, type, userTask = null) {
+            const div = document.createElement('div');
+            div.className = 'p-5 hover:bg-gray-50 transition duration-200';
+
+            let statusBadge = '';
+            let actionButton = '';
+
+            if (type === 'available') {
+                statusBadge = '<span class="bg-success-100 text-success-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Available</span>';
+                actionButton = `
+                    <button onclick="acceptTask('${taskId}')" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
+                        Accept Task
+                    </button>
+                `;
+            } else if (type === 'my') {
+                if (userTask.status === 'accepted') {
+                    statusBadge = '<span class="bg-warning-100 text-warning-800 text-xs font-medium px-2.5 py-0.5 rounded-full">In Progress</span>';
+                    actionButton = `
+                        <button onclick="completeTask('${taskId}')" class="bg-success-600 hover:bg-success-700 text-white px-4 py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
+                            Mark Complete
+                        </button>
+                    `;
+                } else if (userTask.status === 'completed') {
+                    statusBadge = '<span class="bg-success-100 text-success-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Completed</span>';
+                    actionButton = '<span class="text-success-600 font-medium">✓ Completed</span>';
+                } else if (userTask.status === 'pending_approval') {
+                    statusBadge = '<span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Pending Approval</span>';
+                    actionButton = '<span class="text-primary-600 font-medium">Awaiting Review</span>';
+                } else if (userTask.status === 'rejected') {
+                    statusBadge = '<span class="bg-danger-100 text-danger-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Rejected</span>';
+                    actionButton = '<span class="text-danger-600 font-medium">✗ Rejected</span>';
+                }
+            }
+
+            div.innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <h3 class="text-lg font-semibold text-gray-800">${task.title}</h3>
+                    ${statusBadge}
+                </div>
+                <p class="text-gray-600 mb-3">${task.description}</p>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div class="flex items-center space-x-4">
+                        <span class="text-success-600 font-bold">$${task.reward.toFixed(2)}</span>
+                        <span class="text-gray-500 text-sm">
+                            <i class="fas fa-clock mr-1"></i>
+                            ${task.estimatedTime} min
+                        </span>
+                        ${type === 'my' && userTask.acceptedAt ? `
+                        <span class="text-gray-500 text-sm">
+                            <i class="fas fa-calendar-alt mr-1"></i>
+                            ${new Date(userTask.acceptedAt).toLocaleDateString()}
+                        </span>
+                        ` : ''}
+                    </div>
+                    <div class="w-full sm:w-auto">
+                        ${actionButton}
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // Accept task
+        async function acceptTask(taskId) {
+            showLoading(true);
+            try {
+                await database.ref(`userTasks/${currentUser.uid}/${taskId}`).set({
+                    status: 'accepted',
+                    acceptedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+                showMessage('Task accepted successfully!', 'success');
+            } catch (error) {
+                showMessage('Error accepting task: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Complete task
+        async function completeTask(taskId) {
+            showLoading(true);
+            try {
+                await database.ref(`userTasks/${currentUser.uid}/${taskId}`).update({
+                    status: 'pending_approval',
+                    completedAt: firebase.database.ServerValue.TIMESTAMP
+                });
+                showMessage('Task marked as complete! Awaiting admin approval.', 'success');
+            } catch (error) {
+                showMessage('Error completing task: ' + error.message, 'error');
+            }
+            showLoading(false);
+        }
+
+        // Update pending tasks count
+        function updatePendingTasksCount() {
+            const pendingCount = Object.values(userTasks).filter(task => 
+                task.status === 'accepted' || task.status === 'pending_approval'
+            ).length;
+            document.getElementById('pendingTasks').textContent = pendingCount;
+        }
+
+        // Withdraw functions
+        function showWithdrawModal() {
+            const paymentDetails = document.getElementById('paymentDetails');
+            paymentDetails.innerHTML = `
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">PayPal Email</label>
+                    <input type="email" id="paypalEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="your@paypal.com">
+                </div>
+            `;
+            
+            document.getElementById('withdrawModal').classList.remove('hidden');
+        }
+
+        function hideWithdrawModal() {
+            document.getElementById('withdrawModal').classList.add('hidden');
+        }
+
+        function submitWithdrawal() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const method = document.getElementById('withdrawMethod').value;
+            const paypalEmail = document.getElementById('paypalEmail').value;
+            
+            if (!amount || amount < 5) {
+                showMessage('Minimum withdrawal amount is $5.00', 'error');
+                return;
+            }
+            
+            if (amount > (userData.totalEarnings - (userData.withdrawnAmount || 0))) {
+                showMessage('Insufficient balance for this withdrawal', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            // Create withdrawal request
+            const withdrawalData = {
+                amount: amount,
+                method: method,
+                paypalEmail: paypalEmail,
+                status: 'pending',
+                requestedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+            
+            database.ref(`withdrawals/${currentUser.uid}`).push(withdrawalData)
+                .then(() => {
+                    // Update user's pending withdrawals
+                    const updates = {};
+                    updates[`users/${currentUser.uid}/pendingWithdrawals`] = (userData.pendingWithdrawals || 0) + amount;
+                    
+                    return database.ref().update(updates);
+                })
+                .then(() => {
+                    showMessage('Withdrawal request submitted successfully!', 'success');
+                    hideWithdrawModal();
+                })
+                .catch(error => {
+                    showMessage('Error submitting withdrawal: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    showLoading(false);
+                });
+        }
+
+        // Utility functions
+        function showLoading(show) {
+            if (show) {
+                loadingSpinner.classList.remove('hidden');
+            } else {
+                loadingSpinner.classList.add('hidden');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `p-4 rounded-lg shadow-md ${type === 'success' ? 'bg-success-100 text-success-700 border border-success-200' : 'bg-danger-100 text-danger-700 border border-danger-200'}`;
+            messageDiv.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            messageContainer.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                messageDiv.classList.add('opacity-0', 'transition-opacity', 'duration-300');
+                setTimeout(() => {
+                    if (messageContainer.contains(messageDiv)) {
+                        messageContainer.removeChild(messageDiv);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        function getAuthErrorMessage(error) {
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    return 'Invalid email address';
+                case 'auth/user-disabled':
+                    return 'Account disabled';
+                case 'auth/user-not-found':
+                    return 'Account not found';
+                case 'auth/wrong-password':
+                    return 'Incorrect password';
+                case 'auth/email-already-in-use':
+                    return 'Email already in use';
+                case 'auth/weak-password':
+                    return 'Password should be at least 6 characters';
+                default:
+                    return error.message;
+            }
+        }
+    </script>
+</body>
+</html>
