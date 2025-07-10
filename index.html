@@ -83,7 +83,7 @@
             <div class="flex justify-between items-center py-3">
                 <div class="flex items-center">
                     <i class="fas fa-tasks text-primary-600 text-2xl mr-2"></i>
-                    <h1 class="text-2xl font-bold text-gray-800">Task<span class="text-primary-600">Earn</span></h1>
+                    <h1 class="text-xl md:text-2xl font-bold text-gray-800">Task<span class="text-primary-600">Earn</span></h1>
                 </div>
                 <div id="navButtons" class="flex items-center space-x-4">
                     <!-- Will be populated by JavaScript -->
@@ -98,7 +98,7 @@
         <div id="authSection" class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6 mb-8 animate__animated animate__fadeIn">
             <div class="text-center mb-6">
                 <i class="fas fa-tasks text-primary-500 text-5xl mb-4"></i>
-                <h2 class="text-3xl font-bold text-gray-800">Welcome to TaskEarn</h2>
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800">Welcome to TaskEarn</h2>
                 <p class="text-gray-600 mt-2">Complete tasks and earn money instantly</p>
             </div>
             
@@ -158,47 +158,47 @@
             <div class="bg-gradient-to-r from-primary-500 to-primary-700 rounded-xl shadow-md p-6 mb-8 text-white">
                 <div class="flex flex-col md:flex-row justify-between items-center">
                     <div>
-                        <h2 class="text-2xl font-bold mb-2">Welcome back, <span id="welcomeName"></span>!</h2>
+                        <h2 class="text-xl md:text-2xl font-bold mb-2">Welcome back, <span id="welcomeName"></span>!</h2>
                         <p class="opacity-90">Complete tasks and grow your earnings today</p>
                     </div>
                     <button onclick="showWithdrawModal()" class="mt-4 md:mt-0 bg-white text-primary-700 hover:bg-gray-100 font-medium py-2 px-6 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-md hover:shadow-lg">
-                        <i class="fas fa-wallet mr-2"></i> Withdraw Earnings
+                        <i class="fas fa-wallet mr-2"></i> Withdraw
                     </button>
                 </div>
             </div>
 
             <!-- User Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md transition duration-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-primary-100 text-primary-600 mr-4">
-                            <i class="fas fa-coins text-xl"></i>
+                        <div class="p-2 md:p-3 rounded-full bg-primary-100 text-primary-600 mr-3 md:mr-4">
+                            <i class="fas fa-coins text-lg md:text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-700">Total Earnings</h3>
-                            <p id="totalEarnings" class="text-2xl font-bold text-success-600">$0.00</p>
+                            <h3 class="text-sm md:text-lg font-semibold text-gray-700">Total Earnings</h3>
+                            <p id="totalEarnings" class="text-xl md:text-2xl font-bold text-success-600">$0.00</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md transition duration-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-success-100 text-success-600 mr-4">
-                            <i class="fas fa-check-circle text-xl"></i>
+                        <div class="p-2 md:p-3 rounded-full bg-success-100 text-success-600 mr-3 md:mr-4">
+                            <i class="fas fa-check-circle text-lg md:text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-700">Completed Tasks</h3>
-                            <p id="completedTasks" class="text-2xl font-bold text-primary-600">0</p>
+                            <h3 class="text-sm md:text-lg font-semibold text-gray-700">Completed Tasks</h3>
+                            <p id="completedTasks" class="text-xl md:text-2xl font-bold text-primary-600">0</p>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 hover:shadow-md transition duration-200">
+                <div class="bg-white rounded-xl shadow-sm p-4 md:p-6 border border-gray-100 hover:shadow-md transition duration-200">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-warning-100 text-warning-600 mr-4">
-                            <i class="fas fa-clock text-xl"></i>
+                        <div class="p-2 md:p-3 rounded-full bg-warning-100 text-warning-600 mr-3 md:mr-4">
+                            <i class="fas fa-clock text-lg md:text-xl"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-700">Pending Tasks</h3>
-                            <p id="pendingTasks" class="text-2xl font-bold text-warning-600">0</p>
+                            <h3 class="text-sm md:text-lg font-semibold text-gray-700">Pending Tasks</h3>
+                            <p id="pendingTasks" class="text-xl md:text-2xl font-bold text-warning-600">0</p>
                         </div>
                     </div>
                 </div>
@@ -206,15 +206,15 @@
 
             <!-- Available Tasks -->
             <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-8 border border-gray-100">
-                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center">
-                    <h2 class="text-xl font-bold text-gray-800">Available Tasks</h2>
-                    <button onclick="refreshTasks()" class="text-primary-600 hover:text-primary-800">
+                <div class="px-4 md:px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                    <h2 class="text-lg md:text-xl font-bold text-gray-800">Available Tasks</h2>
+                    <button onclick="refreshTasks()" class="text-primary-600 hover:text-primary-800 text-sm md:text-base">
                         <i class="fas fa-sync-alt mr-1"></i> Refresh
                     </button>
                 </div>
                 <div id="tasksList" class="divide-y divide-gray-100">
                     <!-- Tasks will be populated by JavaScript -->
-                    <div class="p-8 text-center text-gray-500">
+                    <div class="p-6 md:p-8 text-center text-gray-500">
                         <i class="fas fa-spinner fa-spin text-2xl mb-2"></i>
                         <p>Loading tasks...</p>
                     </div>
@@ -223,17 +223,95 @@
 
             <!-- My Tasks -->
             <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
-                <div class="px-6 py-4 border-b border-gray-100">
-                    <h2 class="text-xl font-bold text-gray-800">My Tasks</h2>
+                <div class="px-4 md:px-6 py-4 border-b border-gray-100">
+                    <h2 class="text-lg md:text-xl font-bold text-gray-800">My Tasks</h2>
                 </div>
                 <div id="myTasksList" class="divide-y divide-gray-100">
                     <!-- User's tasks will be populated by JavaScript -->
-                    <div class="p-8 text-center text-gray-500">
+                    <div class="p-6 md:p-8 text-center text-gray-500">
                         <i class="fas fa-tasks text-2xl mb-2"></i>
                         <p>You haven't accepted any tasks yet</p>
                         <p class="text-sm mt-2">Accept tasks from above to get started</p>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 id="taskModalTitle" class="text-xl font-bold text-gray-800">Task Details</h3>
+                <button onclick="hideTaskModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div id="taskInfoStep" class="animate__animated animate__fadeIn">
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold text-gray-800" id="taskModalName"></h4>
+                    <p class="text-gray-600 mt-1" id="taskModalDescription"></p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <p class="text-sm text-gray-500">Reward</p>
+                        <p class="text-success-600 font-bold" id="taskModalReward"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Time</p>
+                        <p class="text-gray-600" id="taskModalTime"></p>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-500">Instructions</p>
+                    <div id="taskModalInstructions" class="prose prose-sm max-w-none mt-1"></div>
+                </div>
+                
+                <div id="taskProofRequirements" class="mb-4 hidden">
+                    <p class="text-sm text-gray-500">Proof Requirements</p>
+                    <div id="taskProofDetails" class="prose prose-sm max-w-none mt-1"></div>
+                </div>
+                
+                <div class="flex justify-end">
+                    <button onclick="startTask()" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Start Task
+                    </button>
+                </div>
+            </div>
+            
+            <div id="taskProofStep" class="hidden animate__animated animate__fadeIn">
+                <div class="mb-4">
+                    <h4 class="text-lg font-semibold text-gray-800">Submit Proof</h4>
+                    <p class="text-gray-600 text-sm mt-1">Complete the task and submit your proof below</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-medium mb-2">Your Answer</label>
+                    <textarea id="taskProofText" rows="6" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="Enter your task proof here..."></textarea>
+                </div>
+                
+                <div class="flex justify-between">
+                    <button onclick="backToTaskInfo()" class="text-gray-600 hover:text-gray-800 font-medium py-2 px-4">
+                        Back
+                    </button>
+                    <button onclick="submitTaskProof()" class="bg-success-600 hover:bg-success-700 text-white font-medium py-2 px-4 rounded-lg transition duration-200">
+                        Submit Proof
+                    </button>
+                </div>
+            </div>
+            
+            <div id="taskCompleteStep" class="hidden animate__animated animate__fadeIn text-center py-8">
+                <div class="text-success-500 text-5xl mb-4">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h4 class="text-xl font-bold text-gray-800 mb-2">Task Submitted!</h4>
+                <p class="text-gray-600 mb-4">Your task proof has been submitted for review.</p>
+                <button onclick="hideTaskModal()" class="bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-6 rounded-lg transition duration-200">
+                    Close
+                </button>
             </div>
         </div>
     </div>
@@ -251,6 +329,7 @@
                 <label class="block text-gray-700 text-sm font-medium mb-2">Amount ($)</label>
                 <input type="number" id="withdrawAmount" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="10.00" min="5" step="0.01">
                 <p class="text-xs text-gray-500 mt-1">Minimum withdrawal: $5.00</p>
+                <p class="text-xs text-primary-600 mt-1">Available: $<span id="availableBalance">0.00</span></p>
             </div>
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-medium mb-2">Payment Method</label>
@@ -307,6 +386,8 @@
         let userTasks = {};
         let userData = {};
         let allTasks = {};
+        let currentTaskId = null;
+        let currentTaskData = null;
 
         // DOM Elements
         const authSection = document.getElementById('authSection');
@@ -349,7 +430,7 @@
                         ${(currentUser.displayName || currentUser.email).charAt(0).toUpperCase()}
                     </div>
                 </div>
-                <button onclick="logout()" class="bg-danger-600 hover:bg-danger-700 text-white px-4 py-2 rounded-lg transition duration-200">
+                <button onclick="logout()" class="bg-danger-600 hover:bg-danger-700 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg transition duration-200 text-sm md:text-base">
                     Logout
                 </button>
             `;
@@ -422,6 +503,10 @@
             database.ref(`users/${currentUser.uid}`).on('value', (snapshot) => {
                 userData = snapshot.val() || {};
                 updateUserStats();
+                
+                // Update available balance for withdrawal
+                const available = (userData.totalEarnings || 0) - (userData.withdrawnAmount || 0) - (userData.pendingWithdrawals || 0);
+                document.getElementById('availableBalance').textContent = available.toFixed(2);
             });
 
             // Load user's tasks
@@ -453,6 +538,7 @@
                 allTasks = snapshot.val() || {};
                 displayTasks(allTasks);
                 showLoading(false);
+                showMessage('Tasks refreshed!', 'success');
             });
         }
 
@@ -467,7 +553,7 @@
 
             if (activeTasks.length === 0) {
                 tasksList.innerHTML = `
-                    <div class="p-8 text-center text-gray-500">
+                    <div class="p-6 md:p-8 text-center text-gray-500">
                         <i class="fas fa-tasks text-2xl mb-2"></i>
                         <p>No available tasks at the moment</p>
                         <p class="text-sm mt-2">Check back later for new tasks</p>
@@ -490,7 +576,7 @@
 
             if (Object.keys(userTasks).length === 0) {
                 myTasksList.innerHTML = `
-                    <div class="p-8 text-center text-gray-500">
+                    <div class="p-6 md:p-8 text-center text-gray-500">
                         <i class="fas fa-tasks text-2xl mb-2"></i>
                         <p>You haven't accepted any tasks yet</p>
                         <p class="text-sm mt-2">Accept tasks from above to get started</p>
@@ -514,7 +600,7 @@
         // Create task element
         function createTaskElement(task, taskId, type, userTask = null) {
             const div = document.createElement('div');
-            div.className = 'p-5 hover:bg-gray-50 transition duration-200';
+            div.className = 'p-4 md:p-5 hover:bg-gray-50 transition duration-200';
 
             let statusBadge = '';
             let actionButton = '';
@@ -522,45 +608,45 @@
             if (type === 'available') {
                 statusBadge = '<span class="bg-success-100 text-success-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Available</span>';
                 actionButton = `
-                    <button onclick="acceptTask('${taskId}')" class="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
-                        Accept Task
+                    <button onclick="showTaskDetails('${taskId}')" class="bg-primary-600 hover:bg-primary-700 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm md:text-base">
+                        View Task
                     </button>
                 `;
             } else if (type === 'my') {
                 if (userTask.status === 'accepted') {
                     statusBadge = '<span class="bg-warning-100 text-warning-800 text-xs font-medium px-2.5 py-0.5 rounded-full">In Progress</span>';
                     actionButton = `
-                        <button onclick="completeTask('${taskId}')" class="bg-success-600 hover:bg-success-700 text-white px-4 py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md">
-                            Mark Complete
+                        <button onclick="showTaskDetails('${taskId}')" class="bg-success-600 hover:bg-success-700 text-white px-3 py-1 md:px-4 md:py-2 rounded-lg transition duration-200 transform hover:-translate-y-0.5 shadow-sm hover:shadow-md text-sm md:text-base">
+                            Complete Task
                         </button>
                     `;
                 } else if (userTask.status === 'completed') {
                     statusBadge = '<span class="bg-success-100 text-success-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Completed</span>';
-                    actionButton = '<span class="text-success-600 font-medium">✓ Completed</span>';
+                    actionButton = '<span class="text-success-600 font-medium text-sm md:text-base">✓ Completed</span>';
                 } else if (userTask.status === 'pending_approval') {
                     statusBadge = '<span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Pending Approval</span>';
-                    actionButton = '<span class="text-primary-600 font-medium">Awaiting Review</span>';
+                    actionButton = '<span class="text-primary-600 font-medium text-sm md:text-base">Awaiting Review</span>';
                 } else if (userTask.status === 'rejected') {
                     statusBadge = '<span class="bg-danger-100 text-danger-800 text-xs font-medium px-2.5 py-0.5 rounded-full">Rejected</span>';
-                    actionButton = '<span class="text-danger-600 font-medium">✗ Rejected</span>';
+                    actionButton = '<span class="text-danger-600 font-medium text-sm md:text-base">✗ Rejected</span>';
                 }
             }
 
             div.innerHTML = `
                 <div class="flex justify-between items-start mb-2">
-                    <h3 class="text-lg font-semibold text-gray-800">${task.title}</h3>
+                    <h3 class="text-base md:text-lg font-semibold text-gray-800">${task.title}</h3>
                     ${statusBadge}
                 </div>
-                <p class="text-gray-600 mb-3">${task.description}</p>
+                <p class="text-gray-600 text-sm md:text-base mb-3 line-clamp-2">${task.description}</p>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-                    <div class="flex items-center space-x-4">
-                        <span class="text-success-600 font-bold">$${task.reward.toFixed(2)}</span>
-                        <span class="text-gray-500 text-sm">
+                    <div class="flex items-center space-x-2 md:space-x-4">
+                        <span class="text-success-600 font-bold text-sm md:text-base">$${task.reward.toFixed(2)}</span>
+                        <span class="text-gray-500 text-xs md:text-sm">
                             <i class="fas fa-clock mr-1"></i>
                             ${task.estimatedTime} min
                         </span>
                         ${type === 'my' && userTask.acceptedAt ? `
-                        <span class="text-gray-500 text-sm">
+                        <span class="text-gray-500 text-xs md:text-sm">
                             <i class="fas fa-calendar-alt mr-1"></i>
                             ${new Date(userTask.acceptedAt).toLocaleDateString()}
                         </span>
@@ -575,34 +661,147 @@
             return div;
         }
 
-        // Accept task
-        async function acceptTask(taskId) {
-            showLoading(true);
-            try {
-                await database.ref(`userTasks/${currentUser.uid}/${taskId}`).set({
-                    status: 'accepted',
-                    acceptedAt: firebase.database.ServerValue.TIMESTAMP
-                });
-                showMessage('Task accepted successfully!', 'success');
-            } catch (error) {
-                showMessage('Error accepting task: ' + error.message, 'error');
+        // Show task details modal
+        function showTaskDetails(taskId) {
+            currentTaskId = taskId;
+            currentTaskData = allTasks[taskId];
+            
+            if (!currentTaskData) return;
+            
+            document.getElementById('taskModalTitle').textContent = currentTaskData.title;
+            document.getElementById('taskModalName').textContent = currentTaskData.title;
+            document.getElementById('taskModalDescription').textContent = currentTaskData.description;
+            document.getElementById('taskModalReward').textContent = `$${currentTaskData.reward.toFixed(2)}`;
+            document.getElementById('taskModalTime').textContent = `${currentTaskData.estimatedTime} minutes`;
+            
+            // Format instructions
+            const instructionsDiv = document.getElementById('taskModalInstructions');
+            instructionsDiv.innerHTML = currentTaskData.instructions || 'No specific instructions provided.';
+            
+            // Show proof requirements if they exist
+            if (currentTaskData.proofRequirements) {
+                document.getElementById('taskProofRequirements').classList.remove('hidden');
+                const proofDetailsDiv = document.getElementById('taskProofDetails');
+                proofDetailsDiv.innerHTML = currentTaskData.proofRequirements;
+            } else {
+                document.getElementById('taskProofRequirements').classList.add('hidden');
             }
-            showLoading(false);
+            
+            // Reset the modal to first step
+            document.getElementById('taskInfoStep').classList.remove('hidden');
+            document.getElementById('taskProofStep').classList.add('hidden');
+            document.getElementById('taskCompleteStep').classList.add('hidden');
+            
+            // Show modal
+            document.getElementById('taskModal').classList.remove('hidden');
         }
 
-        // Complete task
-        async function completeTask(taskId) {
-            showLoading(true);
-            try {
-                await database.ref(`userTasks/${currentUser.uid}/${taskId}`).update({
-                    status: 'pending_approval',
-                    completedAt: firebase.database.ServerValue.TIMESTAMP
+        // Hide task modal
+        function hideTaskModal() {
+            document.getElementById('taskModal').classList.add('hidden');
+            currentTaskId = null;
+            currentTaskData = null;
+        }
+
+        // Start task (move to proof submission step)
+        function startTask() {
+            // Check if this is a new task or one in progress
+            if (!userTasks[currentTaskId]) {
+                // New task - mark as accepted
+                showLoading(true);
+                database.ref(`userTasks/${currentUser.uid}/${currentTaskId}`).set({
+                    status: 'accepted',
+                    acceptedAt: firebase.database.ServerValue.TIMESTAMP
+                }).then(() => {
+                    showLoading(false);
+                    // Move to proof step
+                    document.getElementById('taskInfoStep').classList.add('hidden');
+                    document.getElementById('taskProofStep').classList.remove('hidden');
                 });
-                showMessage('Task marked as complete! Awaiting admin approval.', 'success');
-            } catch (error) {
-                showMessage('Error completing task: ' + error.message, 'error');
+            } else {
+                // Task already accepted - just move to proof step
+                document.getElementById('taskInfoStep').classList.add('hidden');
+                document.getElementById('taskProofStep').classList.remove('hidden');
             }
-            showLoading(false);
+        }
+
+        // Back to task info from proof step
+        function backToTaskInfo() {
+            document.getElementById('taskProofStep').classList.add('hidden');
+            document.getElementById('taskInfoStep').classList.remove('hidden');
+        }
+
+        // Submit task proof
+        function submitTaskProof() {
+            const proofText = document.getElementById('taskProofText').value.trim();
+            
+            if (!proofText) {
+                showMessage('Please enter your task proof', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            
+            // Submit proof for review
+            database.ref(`userTasks/${currentUser.uid}/${currentTaskId}`).update({
+                status: 'pending_approval',
+                completedAt: firebase.database.ServerValue.TIMESTAMP,
+                proof: proofText
+            }).then(() => {
+                showLoading(false);
+                
+                // Move to completion step
+                document.getElementById('taskProofStep').classList.add('hidden');
+                document.getElementById('taskCompleteStep').classList.remove('hidden');
+                
+                // Auto-approve if this task type doesn't require manual review
+                if (currentTaskData.autoApprove) {
+                    setTimeout(() => {
+                        approveTaskAutomatically(currentTaskId);
+                    }, 2000);
+                }
+            }).catch(error => {
+                showLoading(false);
+                showMessage('Error submitting proof: ' + error.message, 'error');
+            });
+        }
+
+        // Auto-approve task if conditions are met
+        function approveTaskAutomatically(taskId) {
+            // Check if proof meets requirements (this would be more sophisticated in a real app)
+            const proofText = document.getElementById('taskProofText').value.trim();
+            const minLength = currentTaskData.minProofLength || 20;
+            
+            if (proofText.length >= minLength) {
+                // Auto-approve
+                database.ref(`userTasks/${currentUser.uid}/${taskId}`).update({
+                    status: 'completed',
+                    approvedAt: firebase.database.ServerValue.TIMESTAMP,
+                    approvedBy: 'auto'
+                }).then(() => {
+                    // Update user earnings
+                    const reward = currentTaskData.reward;
+                    const newEarnings = (userData.totalEarnings || 0) + reward;
+                    const newCompletedTasks = (userData.completedTasks || 0) + 1;
+                    
+                    return database.ref(`users/${currentUser.uid}`).update({
+                        totalEarnings: newEarnings,
+                        completedTasks: newCompletedTasks
+                    });
+                }).then(() => {
+                    showMessage('Task auto-approved! Earnings added to your balance.', 'success');
+                });
+            } else {
+                // Auto-reject if proof is too short
+                database.ref(`userTasks/${currentUser.uid}/${taskId}`).update({
+                    status: 'rejected',
+                    rejectedAt: firebase.database.ServerValue.TIMESTAMP,
+                    rejectedBy: 'auto',
+                    rejectionReason: 'Proof submission too short'
+                }).then(() => {
+                    showMessage('Task rejected: Proof submission did not meet requirements', 'error');
+                });
+            }
         }
 
         // Update pending tasks count
@@ -615,14 +814,23 @@
 
         // Withdraw functions
         function showWithdrawModal() {
+            const available = (userData.totalEarnings || 0) - (userData.withdrawnAmount || 0) - (userData.pendingWithdrawals || 0);
+            
+            if (available < 5) {
+                showMessage('Minimum $5.00 required to withdraw', 'error');
+                return;
+            }
+            
             const paymentDetails = document.getElementById('paymentDetails');
             paymentDetails.innerHTML = `
                 <div class="mb-4">
                     <label class="block text-gray-700 text-sm font-medium mb-2">PayPal Email</label>
-                    <input type="email" id="paypalEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="your@paypal.com">
+                    <input type="email" id="paypalEmail" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent" placeholder="your@paypal.com" required>
                 </div>
             `;
             
+            // Set max amount to available balance
+            document.getElementById('withdrawAmount').max = available.toFixed(2);
             document.getElementById('withdrawModal').classList.remove('hidden');
         }
 
@@ -640,7 +848,9 @@
                 return;
             }
             
-            if (amount > (userData.totalEarnings - (userData.withdrawnAmount || 0))) {
+            const available = (userData.totalEarnings || 0) - (userData.withdrawnAmount || 0) - (userData.pendingWithdrawals || 0);
+            
+            if (amount > available) {
                 showMessage('Insufficient balance for this withdrawal', 'error');
                 return;
             }
